@@ -1,0 +1,2 @@
+# serpinskis
+Generate Serpinski triangles
