@@ -2,7 +2,6 @@
   (:require [quil.core :as q]
             ))
 
-
 (defn serp-triangle
   ([]
    (serp-triangle [{:x  0   :y 1
@@ -32,7 +31,7 @@
 
 (defn draw-state []  
   (doseq [tri (serp-triangle (serp-triangle (serp-triangle (serp-triangle (serp-triangle)))))]
-    (apply-tri q/triangle (scale-triangle 800 600 tri))))
+    (apply-tri q/triangle (scale-triangle (q/width) (q/height) tri))))
 
 (q/defsketch serpinskis
   :title "Serpinski triangle"
