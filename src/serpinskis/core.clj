@@ -18,11 +18,40 @@
                       :x1 (* 1/2 (+ (:x1 tri) (:x2 tri))) :y1 (* 1/2 (+ (:y1 tri) (:y2 tri)))
                       :x2 (:x2 tri) :y2 (:y2 tri)}])
            parent)))
+(defn painter [offset-x offset-y width height]
+  {:offset-x offset-x :offset-y offset-y :width width :height height })
 
-(defn scale-triangle [width height triangle]
-  {:x (int (* width (:x triangle))) :y (int (* height (:y triangle)))
-   :x1 (int (* width (:x1 triangle))) :y1 (int (* height (:y1 triangle)))
-   :x2 (int (* width (:x2 triangle))) :y2 (int (* height (:y2 triangle)))})
+(defn top-left-q [painter]
+  {:offset-x (:offset-x painter)
+   :offset-y (:offset-y painter)
+   :width (/ 2 (:width painter))
+   :height (/ 2 (:height painter))} )
+
+(defn bottom-right-q [painter]
+  {:offset-y (+ (/ (:height painter) 2 ) (:offset-y painter))
+   :offset-x (+ (/ (:width painter) 2 ) (:offset-x painter))
+   :width (/ (:width painter) 2)
+   :height (/ (:height painter) 2)})
+
+(defn top-right-q [painter]
+  {:offset-y (:offset-y painter)
+   :offset-x (+ (/ (:width painter) 2 ) (:offset-x painter))
+   :width (/ (:width painter) 2)
+   :height (/ (:height painter) 2)})
+
+(defn bottom-left-q [painter]
+  {:offset-y (+ (/ (:height painter) 2 ) (:offset-y painter))
+   :offset-x (+ (/ (:width painter) 2) (:offset-x painter))
+   :width (/ (:width painter) 2)
+   :height (/ (:height painter) 2)})
+
+(defn scale-triangle [{offset-x :offset-x offset-y :offset-y width :width height :height} triangle]
+  {:x (+ offset-x (int (* width (:x triangle))))
+   :y (+ offset-y (int (* height (:y triangle))))
+   :x1 (+ offset-x (int (* width (:x1 triangle))) )
+   :y1 (+ offset-y (int (* height (:y1 triangle))))
+   :x2 (+ offset-x (int (* width (:x2 triangle))) )
+   :y2 (+ offset-y (int (* height (:y2 triangle))) )})
 
 (defn apply-tri [fn tri]
   (fn (:x tri) (:y tri)
@@ -30,8 +59,10 @@
     (:x2 tri) (:y2 tri)))
 
 (defn draw-state []  
-  (doseq [tri (serp-triangle (serp-triangle (serp-triangle (serp-triangle (serp-triangle)))))]
-    (apply-tri q/triangle (scale-triangle (q/width) (q/height) tri))))
+  (let [init-painter (painter 0 0 (q/width) (q/height))]
+    (doseq [tri (serp-triangle (serp-triangle (serp-triangle (serp-triangle (serp-triangle)))))]
+      (apply-tri q/triangle (scale-triangle (top-left-q (bottom-left-q init-painter)) tri))
+      )))
 
 (q/defsketch serpinskis
   :title "Serpinski triangle"
