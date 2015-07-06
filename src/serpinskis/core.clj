@@ -18,30 +18,33 @@
                       :x1 (* 1/2 (+ (:x1 tri) (:x2 tri))) :y1 (* 1/2 (+ (:y1 tri) (:y2 tri)))
                       :x2 (:x2 tri) :y2 (:y2 tri)}])
            parent)))
+
 (defn painter [offset-x offset-y width height]
   {:offset-x offset-x :offset-y offset-y :width width :height height })
 
-(defn top-left-q [painter]
+
+
+(defn top-left [painter]
   {:offset-x (:offset-x painter)
    :offset-y (:offset-y painter)
-   :width (/ 2 (:width painter))
-   :height (/ 2 (:height painter))} )
+   :width (/ (:width painter) 2)
+   :height (/ (:height painter) 2)} )
 
-(defn bottom-right-q [painter]
-  {:offset-y (+ (/ (:height painter) 2 ) (:offset-y painter))
+(defn bottom-right [painter]
+  {:offset-y (+ (/ (:Height painter) 2 ) (:offset-y painter))
    :offset-x (+ (/ (:width painter) 2 ) (:offset-x painter))
    :width (/ (:width painter) 2)
    :height (/ (:height painter) 2)})
 
-(defn top-right-q [painter]
+(defn top-right [painter]
   {:offset-y (:offset-y painter)
    :offset-x (+ (/ (:width painter) 2 ) (:offset-x painter))
    :width (/ (:width painter) 2)
    :height (/ (:height painter) 2)})
 
-(defn bottom-left-q [painter]
+(defn bottom-left [painter]
   {:offset-y (+ (/ (:height painter) 2 ) (:offset-y painter))
-   :offset-x (+ (/ (:width painter) 2) (:offset-x painter))
+   :offset-x (:offset-x painter)
    :width (/ (:width painter) 2)
    :height (/ (:height painter) 2)})
 
@@ -60,8 +63,8 @@
 
 (defn draw-state []  
   (let [init-painter (painter 0 0 (q/width) (q/height))]
-    (doseq [tri (serp-triangle (serp-triangle (serp-triangle (serp-triangle (serp-triangle)))))]
-      (apply-tri q/triangle (scale-triangle (top-left-q (bottom-left-q init-painter)) tri))
+    (doseq [tri (serp-triangle (serp-triangle (serp-triangle)))]
+      (apply-tri q/triangle (scale-triangle (bottom-right (top-left  init-painter)) tri))
       )))
 
 (q/defsketch serpinskis
